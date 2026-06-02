@@ -1,0 +1,37 @@
+.resume-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.resume-list {
+  list-style: none;
+  padding: 0;
+}
+
+.resume-list--bullets {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.resume-list li + li {
+  margin-top: 0.5rem;
+}
+
+.resume-list__period {
+  color: var(--color-muted);
+}
+
+.resume-grid__edu-label {
+  margin-top: var(--space-md);
+}
+
+@media (max-width: 1024px) {
+  .resume-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}

@@ -1,0 +1,80 @@
+内容与素材 — 编辑上传指南
+==========================
+
+一、修改个人信息与文案
+----------------------
+打开文件：content/site.json
+
+可修改字段示例：
+  profile.nameEn / nameZh     中英文姓名
+  profile.title               职位标题
+  profile.email / linkedin / github
+  profile.about               关于我段落
+  experience[]                工作经历列表
+  skills[]                    技能列表
+  education                   教育背景
+  projects[]                  项目列表（含视频路径、技术栈）
+  social                      页脚社交链接
+
+保存后，开发模式下浏览器会自动刷新显示新内容。
+
+
+二、上传图片
+------------
+1. 将图片文件复制到：
+   F:\Touch\public\assets\images\
+
+2. 建议文件名：
+   avatar.jpg      — 圆形头像（简历页顶部）
+   lifestyle.jpg   — 简历页左下角生活照
+   void-odyssey-poster.jpg — 视频封面（可选）
+
+3. 在 site.json 中对应路径写为（必须以 / 开头）：
+   "/assets/images/avatar.jpg"
+
+
+三、上传项目视频
+----------------
+1. 将 MP4 复制到：
+   F:\Touch\public\assets\videos\
+
+2. 在 site.json 的 projects 项中设置：
+   "video": "/assets/videos/void-odyssey.mp4"
+   "poster": "/assets/videos/void-odyssey-poster.jpg"
+
+3. 视频格式建议：H.264 + AAC，分辨率 1080p 或 720p，控制体积便于加载。
+
+4. 若视频很大，可改用外链：
+   在 site.json 增加 "videoUrl": "https://..." 
+   （需在 ProjectDetail 页面支持外链时再改代码；默认使用本地 MP4）
+
+
+四、新增一个项目
+----------------
+在 site.json 的 "projects" 数组末尾添加对象：
+
+{
+  "id": "my-new-game",
+  "title": "MY GAME",
+  "titleZh": "我的游戏",
+  "year": 2025,
+  "video": "/assets/videos/my-game.mp4",
+  "poster": "/assets/images/my-game-poster.jpg",
+  "description": "项目简介...",
+  "techStack": ["Unity", "C#", "..."],
+  "featured": false
+}
+
+保存后访问 /projects/my-new-game 即可查看详情页。
+
+
+五、预览与发布
+--------------
+本地预览：
+  cd F:\Touch
+  npm run dev
+
+确认无误后构建：
+  npm run build
+
+将代码推送到 GitHub 并在 Vercel 重新部署（见 部署与访问步骤.txt）。

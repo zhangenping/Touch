@@ -1,0 +1,19 @@
+:root {
+  --color-bg: #ffffff;
+  --color-text: #0a0a0a;
+  --color-muted: #4a4a4a;
+  --color-border: #0a0a0a;
+  --color-nav-active-bg: #0a0a0a;
+  --color-nav-active-text: #ffffff;
+  --color-footer-bg: #0a0a0a;
+  --color-footer-text: #ffffff;
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --max-width: 1200px;
+  --header-height: 56px;
+  --footer-height: 48px;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+}

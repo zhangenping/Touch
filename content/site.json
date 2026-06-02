@@ -1,0 +1,85 @@
+{
+  "profile": {
+    "nameEn": "CHEN WEI",
+    "nameZh": "陈伟",
+    "title": "GAME DEVELOPER",
+    "email": "chen@gmail.com",
+    "linkedin": "chenwei",
+    "linkedinUrl": "https://linkedin.com/in/chenwei",
+    "github": "chenwei",
+    "githubUrl": "https://github.com/chenwei",
+    "avatar": "/assets/images/avatar.svg",
+    "lifestyleImage": "/assets/images/lifestyle.svg",
+    "about": "Game developer with 6 years of experience specializing in Unity, C++, and Unreal Engine. Passionate about gameplay systems, performance optimization, and bringing immersive worlds to life."
+  },
+  "experience": [
+    {
+      "role": "Game Developer",
+      "company": "NetEase",
+      "period": "2020 – Present"
+    },
+    {
+      "role": "Lead Developer",
+      "company": "Pixel Studios",
+      "period": "2017 – 2020"
+    }
+  ],
+  "skills": [
+    "Unity",
+    "C++",
+    "C#",
+    "Unreal Engine",
+    "Shader Graph",
+    "Git",
+    "Optimization",
+    "Gameplay Mechanics",
+    "Physics",
+    "Team Leadership"
+  ],
+  "education": "B.S. in Computer Science, Tsinghua University",
+  "projects": [
+    {
+      "id": "void-odyssey",
+      "title": "VOID ODYSSEY",
+      "titleZh": "空灵奥德赛",
+      "year": 2023,
+      "video": "/assets/videos/void-odyssey.mp4",
+      "poster": "/assets/images/video-poster.svg",
+      "description": "An action-adventure game built in Unreal Engine 5, featuring dynamic lighting, advanced AI behaviors, and procedurally generated environments. Led gameplay programming and performance optimization for console targets.",
+      "techStack": [
+        "Unreal Engine 5",
+        "C++",
+        "Blueprint",
+        "Niagara",
+        "Nanite",
+        "Lumen",
+        "Physics",
+        "Material Editor"
+      ],
+      "featured": true
+    },
+    {
+      "id": "void-odyssey-2020",
+      "title": "VOID ODYSSEY",
+      "titleZh": "空灵奥德赛",
+      "year": 2020,
+      "video": "/assets/videos/void-odyssey.mp4",
+      "poster": "/assets/images/video-poster.svg",
+      "description": "Early prototype and vertical slice demonstrating core combat loop and world traversal mechanics.",
+      "techStack": ["Unreal Engine 4", "C++", "Blueprint", "AI Perception"],
+      "featured": false
+    }
+  ],
+  "social": {
+    "twitter": "https://twitter.com/",
+    "instagram": "https://instagram.com/",
+    "linkedin": "https://linkedin.com/in/chenwei",
+    "wechat": "#",
+    "telegram": "https://t.me/",
+    "github": "https://github.com/chenwei"
+  },
+  "contact": {
+    "intro": "Open to collaborations on gameplay programming, technical design, and Unreal/Unity projects.",
+    "location": "Beijing, China"
+  }
+}

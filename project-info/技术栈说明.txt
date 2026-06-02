@@ -1,0 +1,64 @@
+游戏开发者简历网站 — 技术栈说明
+================================
+
+一、核心技术栈
+--------------
+1. 构建工具：Vite 8
+   - 快速热更新、生产构建体积小
+
+2. 前端框架：React 19 + TypeScript
+   - 组件化页面、类型安全、便于维护
+
+3. 路由：React Router DOM
+   - 单页应用多页面：HOME / RESUME / PROJECTS / ABOUT / CONTACT
+
+4. 样式：原生 CSS + CSS 变量
+   - 黑白极简设计，无额外 UI 库依赖
+   - 响应式栅格，手机端自动单列堆叠
+
+5. 内容管理：JSON 数据驱动
+   - 主数据文件：content/site.json
+   - 改文案、项目、链接无需改 React 组件代码
+
+6. 视频：HTML5 Video + 自定义控件
+   - 本地 MP4 放在 public/assets/videos/
+   - 支持封面 poster、播放/暂停、进度、音量、全屏
+   - iOS 使用 playsInline 属性
+
+7. 代码质量
+   - ESLint + TypeScript ESLint
+   - Prettier 统一格式
+   - 规范文档：docs/CODE_STANDARDS.md
+
+二、可选扩展（未默认安装）
+--------------------------
+- Tailwind CSS：若需更快写响应式样式
+- Markdown 内容：可将项目描述改为 .md 文件 + gray-matter 解析
+- 视频外链：B站 / YouTube iframe 嵌入，适合超大演示视频
+
+三、部署与访问（生产环境）
+--------------------------
+推荐：Vercel（免费 HTTPS + 全球 CDN）
+备选：Netlify、Cloudflare Pages、GitHub Pages
+
+构建命令：npm run build
+输出目录：dist/
+
+手机访问：部署后获得 https://xxx.vercel.app 公网地址即可。
+
+四、本地开发
+------------
+npm install          # 安装依赖
+npm run dev          # 开发服务器，默认 http://localhost:5173
+npm run build        # 生产构建
+npm run preview      # 预览构建结果
+
+同一 WiFi 手机预览：
+npm run dev -- --host
+手机浏览器访问 http://<电脑局域网IP>:5173
+
+五、资源格式建议
+----------------
+图片：JPG / WebP，头像建议 400×400 以上
+视频：H.264 编码 MP4，单文件建议 < 50MB
+图标：SVG（已内置页脚社交占位）

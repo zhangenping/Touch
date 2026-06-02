@@ -1,0 +1,60 @@
+手机/公网访问 — 部署步骤
+========================
+
+【方式一】Vercel 部署（推荐）
+----------------------------
+1. 将 F:\Touch 项目推送到 GitHub 仓库（可先 git init + commit）
+
+2. 打开 https://vercel.com 注册/登录
+
+3. 点击 “Add New Project” → 导入 GitHub 仓库
+
+4. 构建设置（一般自动识别）：
+   - Framework Preset: Vite
+   - Build Command: npm run build
+   - Output Directory: dist
+   - Install Command: npm install
+
+5. 点击 Deploy，等待 1～3 分钟
+
+6. 获得地址如：https://your-project.vercel.app
+   手机浏览器直接打开即可，无需同一 WiFi
+
+7. （可选）绑定自己的域名：
+   Vercel 项目 → Settings → Domains → 添加域名并按提示配置 DNS
+
+
+【方式二】Netlify
+-----------------
+1. 登录 https://netlify.com
+2. “Add new site” → “Import an existing project”
+3. 连接 GitHub，Build command: npm run build，Publish: dist
+4. 部署完成后使用 *.netlify.app 地址
+
+
+【方式三】GitHub Pages
+----------------------
+1. 安装 gh-pages 或使用 GitHub Actions
+2. vite.config.ts 中设置 base: '/仓库名/'
+3. 构建后上传 dist 内容到 gh-pages 分支
+
+
+【本地仅局域网预览】
+--------------------
+cd F:\Touch
+npm run dev -- --host
+
+终端会显示 Network 地址，例如：
+  http://192.168.1.100:5173
+
+手机连同一 WiFi，浏览器输入该地址即可。
+注意：电脑关机或断网后无法访问，正式展示请用 Vercel 等方式。
+
+
+【部署前检查清单】
+------------------
+□ npm run build 无报错
+□ content/site.json 中链接、邮箱已改为真实信息
+□ public/assets/images/ 已放入头像与生活照
+□ public/assets/videos/ 已放入项目演示 MP4
+□ site.json 中 video 路径与文件名一致

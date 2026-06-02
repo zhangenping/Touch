@@ -1,0 +1,32 @@
+.project-detail__title {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+}
+
+.project-detail__zh {
+  font-weight: 600;
+  text-transform: none;
+}
+
+.project-detail__desc {
+  margin-top: var(--space-lg);
+  max-width: 70ch;
+  color: var(--color-muted);
+  line-height: 1.65;
+}
+
+.project-detail__tech {
+  margin-top: var(--space-lg);
+}
+
+.project-detail__back {
+  display: inline-block;
+  margin-top: var(--space-lg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
