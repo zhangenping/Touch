@@ -1,13 +1,10 @@
-# 构建并部署到 Vercel
-# 首次运行会打开浏览器登录 Vercel 账号
-
+# 全栈构建并本地生产预览（公网请用 Railway / Docker，见 project-info）
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot\..
 
-Write-Host '>> Building...' -ForegroundColor Cyan
+Write-Host '>> Building web + API...' -ForegroundColor Cyan
 npm run build
 
-Write-Host '>> Deploying to Vercel (production)...' -ForegroundColor Cyan
-npx vercel deploy --prod --yes
-
-Write-Host '>> Done. Copy the Production URL above for mobile access.' -ForegroundColor Green
+Write-Host '>> Starting production server http://localhost:3001' -ForegroundColor Green
+$env:NODE_ENV = 'production'
+npm start

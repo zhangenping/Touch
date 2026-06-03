@@ -1,0 +1,131 @@
+公网部署 — 让任何电脑通过浏览器访问
+====================================
+
+说明
+----
+  本地 http://localhost:5173 只有你自己电脑能打开。
+  公网部署后，别人用手机/电脑输入「服务器地址」即可注册、登录、浏览。
+
+  你的网站 = 前端页面 + API + PostgreSQL，必须部署在「有公网 IP 的服务器」上。
+
+
+═══════════════════════════════════════════════════════════
+方案一：云服务器 + Docker（推荐，国内访问快）
+═══════════════════════════════════════════════════════════
+
+【1】购买服务器
+  - 腾讯云轻量 / 阿里云轻量，地域选离用户近的
+  - 配置：2核 2G 内存起，系统选 Ubuntu 22.04
+  - 记下：公网 IP（例如 123.45.67.89）
+
+【2】安全组 / 防火墙放行端口
+  在云平台控制台 → 防火墙 / 安全组：
+    放行 TCP  3001   （网站访问，必开）
+    可选 TCP  80、443 （若后面配域名 + HTTPS）
+
+【3】SSH 登录服务器
+  Windows 可用 PowerShell：
+    ssh root@你的公网IP
+
+【4】安装 Docker（Ubuntu 上执行一次）
+  curl -fsSL https://get.docker.com | sh
+  sudo usermod -aG docker $USER
+  # 重新登录 SSH 使 docker 组生效
+
+【5】拉取项目
+  git clone https://github.com/zhangenping/Touch.git
+  cd Touch
+
+【6】配置生产环境变量
+  cp .env.production.example .env
+  nano .env   # 或用 vi
+
+  必须修改：
+    JWT_SECRET=一串很长很随机的字符
+    POSTGRES_PASSWORD=数据库强密码
+
+  保存退出。
+
+【7】一键启动（构建 + 数据库 + 网站）
+  chmod +x scripts/deploy-server.sh
+  ./scripts/deploy-server.sh
+
+  或手动：
+    docker compose -f docker-compose.prod.yml up -d --build
+
+  首次构建约 3～10 分钟。
+
+【8】浏览器访问
+  http://你的公网IP:3001
+
+  例如：http://123.45.67.89:3001
+  → /register 注册
+  → /login 登录
+  → 浏览全站
+
+【9】常用运维命令
+  查看运行状态：
+    docker compose -f docker-compose.prod.yml ps
+
+  查看网站日志：
+    docker compose -f docker-compose.prod.yml logs -f app
+
+  更新代码后重新部署：
+    git pull
+    docker compose -f docker-compose.prod.yml up -d --build
+
+  停止：
+    docker compose -f docker-compose.prod.yml down
+
+
+【10】绑定域名 + HTTPS（可选，更专业）
+  1. 域名 DNS A 记录指向服务器公网 IP
+  2. 安装 Nginx 反代 80/443 → 127.0.0.1:3001
+  3. 用 certbot 申请免费 SSL
+  之后访问：https://你的域名.com
+
+
+═══════════════════════════════════════════════════════════
+方案二：Railway（不用自己管服务器，适合能访问 GitHub）
+═══════════════════════════════════════════════════════════
+
+  1. 打开 https://railway.app ，GitHub 登录
+  2. New Project → Deploy from GitHub repo → Touch
+  3. 同一项目 Add Service → Database → PostgreSQL
+  4. 点 Web 服务 → Variables，添加：
+       DATABASE_URL = <从 Postgres 服务复制>
+       JWT_SECRET = <长随机串>
+       NODE_ENV = production
+  5. Web 服务 Settings → Deploy：
+       Start Command:
+       npm run build && npm run db:deploy && npm start
+  6. Settings → Networking → Generate Domain
+  7. 用生成的 xxx.up.railway.app 公网访问（手机亦可）
+
+  注意：Railway 免费额度有限，长期运行可能需付费。
+
+
+═══════════════════════════════════════════════════════════
+本地 vs 公网 对照
+═══════════════════════════════════════════════════════════
+
+  | 环境     | 地址示例                    | 谁能访问     |
+  |----------|-----------------------------|--------------|
+  | 本地开发 | http://localhost:5173       | 仅本机       |
+  | 公网服务器| http://公网IP:3001          | 全网有网即可 |
+  | 域名     | https://yourdomain.com      | 全网         |
+
+
+═══════════════════════════════════════════════════════════
+常见问题
+═══════════════════════════════════════════════════════════
+
+  Q：打不开 http://IP:3001
+  A：检查安全组是否放行 3001；docker compose ps 是否 app、db 都是 running
+
+  Q：注册失败
+  A：docker compose -f docker-compose.prod.yml logs app 看报错；
+     确认 .env 里 JWT_SECRET 已设置
+
+  Q：和 Vercel 静态部署的区别
+  A：带登录注册必须用本方案（Node+数据库），不能只上传 dist 到静态托管

@@ -1,0 +1,78 @@
+全栈部署指南（登录 + 注册 + 浏览网站）
+========================================
+
+一、架构说明
+------------
+  浏览器 → Node 服务器 (Express, 端口 3001)
+              ├── /api/auth/*  注册、登录、用户信息
+              ├── PostgreSQL   用户数据（Prisma）
+              └── 静态文件 (dist/)  作品集页面
+
+  未登录访问 HOME/RESUME 等会自动跳转到 /login
+  注册/登录成功后 JWT 保存在浏览器，可浏览全站
+
+
+二、本地开发（完整流程）
+------------------------
+  1. 复制环境变量：
+     copy .env.example .env
+
+  2. 启动 PostgreSQL（Docker）：
+     npm run db:up
+     详见 project-info/PostgreSQL本地说明.txt
+
+  3. 安装依赖并迁移数据库：
+     npm install
+     npm run db:generate
+     npm run db:deploy
+
+  4. 同时启动前端 + 后端：
+     npm run dev
+
+  5. 浏览器打开 http://localhost:5173
+     - /register 注册
+     - /login 登录
+
+
+三、服务器推荐（按场景）
+------------------------
+
+【方案 A】Railway（国外、上手最快）
+  1. https://railway.app → Deploy from GitHub → Touch
+  2. 添加 PostgreSQL 插件，复制 DATABASE_URL 到 Web 服务变量
+  3. 变量：JWT_SECRET、NODE_ENV=production
+  4. Start Command：
+     npm run build && npm run db:deploy && npm start
+
+【方案 B】腾讯云 / 阿里云轻量（国内）
+  Docker Compose 一键：docker compose up -d --build
+  数据在 Docker volume pgdata
+
+【方案 C】Render
+  Web Service + PostgreSQL，同上环境变量
+
+
+四、Docker 一键部署（VPS）
+--------------------------
+  cp .env.example .env
+  # 设置 JWT_SECRET
+
+  docker compose up -d --build
+
+  访问：http://<服务器IP>:3001
+  数据库：PostgreSQL 容器，volume pgdata 持久化
+
+
+五、环境变量清单
+----------------
+  DATABASE_URL   postgresql://touch:touch_secret@localhost:5432/touch?schema=public
+  JWT_SECRET     生产环境务必使用长随机字符串
+  PORT           默认 3001
+  NODE_ENV       production
+
+
+六、安全与备份
+--------------
+  - 使用 HTTPS
+  - 定期备份 PostgreSQL（pg_dump 或云控制台快照）
+  - 勿将 .env 提交到 Git

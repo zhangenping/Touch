@@ -1,0 +1,38 @@
+# 生产环境：仅数据库 + 网站（不暴露 pgAdmin / 5432 到公网）
+# 用法：docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: touch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-touch_secret}
+      POSTGRES_DB: touch
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U touch -d touch']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-docker.1ms.run/library/node:22-alpine}
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-3001}:3001'
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:?请在 .env 中设置 JWT_SECRET}
+      DATABASE_URL: postgresql://touch:${POSTGRES_PASSWORD:-touch_secret}@db:5432/touch?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

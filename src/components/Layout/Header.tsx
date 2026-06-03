@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Header.css';
 
 const navItems = [
@@ -10,6 +11,8 @@ const navItems = [
 ] as const;
 
 export function Header() {
+  const { user, token, logout } = useAuth();
+
   return (
     <header className="header">
       <nav className="header-nav" aria-label="Main navigation">
@@ -25,6 +28,20 @@ export function Header() {
             {label}
           </NavLink>
         ))}
+        {token ? (
+          <>
+            <span className="header-nav__user" title={user?.email ?? ''}>
+              {user?.name ?? user?.email?.split('@')[0]}
+            </span>
+            <button type="button" className="header-nav__link header-nav__btn" onClick={logout}>
+              LOGOUT
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className="header-nav__link">
+            LOGIN
+          </Link>
+        )}
       </nav>
     </header>
   );

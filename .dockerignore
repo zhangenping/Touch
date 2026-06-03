@@ -1,0 +1,11 @@
+node_modules
+dist
+server/dist
+.git
+.env
+*.md
+project-info
+.vscode
+coverage
+server/prisma/*.db
+server/prisma/*.db-journal

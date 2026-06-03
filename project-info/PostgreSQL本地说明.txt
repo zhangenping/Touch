@@ -1,0 +1,71 @@
+PostgreSQL 本地开发说明
+========================
+
+一、数据库配置位置
+------------------
+  server/prisma/schema.prisma   → provider = "postgresql"
+  .env                          → DATABASE_URL=postgresql://...
+
+二、启动数据库（Docker，推荐）
+------------------------------
+  cd F:\Touch
+  docker compose up db -d
+
+  等待约 5 秒后执行迁移：
+  npm run db:deploy
+
+
+二（附）、可视化查看数据（图形界面）
+------------------------------------
+  Docker Desktop 本身只能看容器状态，不能直接浏览表数据。
+  可用下面两种方式「可视化」：
+
+  【A】pgAdmin（浏览器，Docker 内，推荐）
+    npm run db:gui
+    浏览器打开：http://localhost:5050
+    登录邮箱：admin@touch.local
+    登录密码：admin
+
+    首次添加服务器（Register → Server）：
+      General → Name：Touch Local
+      Connection → Host：db
+      Connection → Port：5432
+      Connection → Username：touch
+      Connection → Password：touch_secret
+      保存后展开：Databases → touch → Schemas → public → Tables → User
+
+  【B】Prisma Studio（项目自带，更轻）
+    确保 db 已启动后执行：
+    npm run db:studio
+    浏览器打开：http://localhost:5555
+    点击 User 表即可查看/编辑注册数据
+
+  或开发时首次建表：
+  npm run db:migrate
+
+三、连接信息（与 docker-compose 默认一致）
+------------------------------------------
+  主机：localhost
+  端口：5432
+  用户：touch
+  密码：touch_secret
+  库名：touch
+
+  连接串：
+  postgresql://touch:touch_secret@localhost:5432/touch?schema=public
+
+四、本机已安装 PostgreSQL（不用 Docker）
+--------------------------------------
+  1. 创建数据库与用户，或使用已有实例
+  2. 修改 .env 中 DATABASE_URL
+  3. npm run db:deploy
+
+五、从 SQLite 迁移说明
+----------------------
+  旧版 SQLite 的 dev.db 不再使用。
+  切换到 Postgres 后需重新注册用户（或自行导出导入数据）。
+
+六、生产环境
+------------
+  Railway / 腾讯云 / Render 提供 PostgreSQL 后，
+  将平台给的 DATABASE_URL 写入环境变量即可，无需改 schema。

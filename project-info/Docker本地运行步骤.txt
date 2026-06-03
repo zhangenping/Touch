@@ -1,0 +1,56 @@
+Docker 运行网站（本机公网测试前的一步）
+====================================
+
+一、两种 Docker 用法
+--------------------
+  【开发】只跑数据库，代码在 VS Code 里改：
+    docker compose up db -d
+    npm run dev
+    浏览器：http://localhost:5173
+
+  【Docker 完整网站】数据库 + 网站都在容器里（与服务器部署相同）：
+    docker compose -f docker-compose.prod.yml up -d --build
+    浏览器：http://localhost:3001
+
+
+二、一键启动（推荐：数据库 Docker + 网站本机跑）
+----------------------------------------------
+  若无法拉取 node 镜像（auth.docker.io 超时），用此方式：
+
+  cd F:\Touch
+  .\scripts\docker-prod.ps1
+
+  打开：http://localhost:3001
+
+  全容器部署（需 Docker Hub 正常）：
+  .\scripts\docker-prod-full.ps1
+
+
+三、常用命令
+------------
+  查看状态：
+    docker compose -f docker-compose.prod.yml ps
+
+  查看日志：
+    docker compose -f docker-compose.prod.yml logs -f app
+
+  停止：
+    docker compose -f docker-compose.prod.yml down
+
+  停止并删除数据（慎用）：
+    docker compose -f docker-compose.prod.yml down -v
+
+
+四、与开发模式同时跑时
+----------------------
+  若 3001 端口被占用，在 .env 改 APP_PORT=3002
+  然后重新 up --build，访问 http://localhost:3002
+
+  开发数据库容器与生产 compose 不要重复占 5432；
+  跑 prod 前先：docker compose stop db
+
+
+五、下一步
+----------
+  本机 Docker 验证无误后，把同一套 compose 放到云服务器 → 见 公网服务器部署步骤.txt
+  Railway 部署 → 见 Railway部署步骤.txt

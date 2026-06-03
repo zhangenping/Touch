@@ -16,7 +16,12 @@
    - 黑白极简设计，无额外 UI 库依赖
    - 响应式栅格，手机端自动单列堆叠
 
-5. 内容管理：JSON 数据驱动
+5. 数据库：PostgreSQL + Prisma ORM
+   - 用户注册/登录数据
+   - 本地 Docker：npm run db:up
+   - 说明见 project-info/PostgreSQL本地说明.txt
+
+6. 内容管理：JSON 数据驱动
    - 主数据文件：content/site.json
    - 改文案、项目、链接无需改 React 组件代码
 

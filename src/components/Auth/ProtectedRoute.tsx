@@ -1,0 +1,22 @@
+import { type ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
+export function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { token, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return (
+      <div className="page" style={{ textAlign: 'center', padding: '4rem' }}>
+        <p className="section-label">Loading</p>
+      </div>
+    );
+  }
+
+  if (!token) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  return children;
+}

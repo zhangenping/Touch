@@ -10,6 +10,10 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+server/dist
+server/prisma/*.db
+server/prisma/*.db-journal
+.env
 *.local
 
 # Editor directories and files

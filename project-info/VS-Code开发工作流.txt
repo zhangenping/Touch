@@ -18,9 +18,11 @@ VS Code 完整开发工作流 — F:\Touch
 二、首次准备（只需一次）
 ------------------------
 1. 安装 Node.js LTS：https://nodejs.org/
-2. VS Code 终端：Ctrl + ` 打开
+  2. VS Code 终端：Ctrl + ` 打开
 3. 执行：
    npm install
+   npm run db:up
+   npm run db:deploy
 4. 若弹出扩展推荐，可安装：
    - ESLint
    - Prettier

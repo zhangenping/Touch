@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "dev: 开发服务器",
+      "label": "dev: 全栈 (前端+API)",
       "type": "npm",
       "script": "dev",
       "problemMatcher": [],
