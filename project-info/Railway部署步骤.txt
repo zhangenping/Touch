@@ -1,98 +1,106 @@
-Railway 公网部署步骤（后续使用）
-================================
+Railway 部署步骤（用项目 Dockerfile，等同本地 Docker 网站容器）
+================================================================
 
-前置：本机 Docker 已能正常访问 http://localhost:3001 再部署到 Railway。
-
-一、准备 GitHub
----------------
-  代码已在：https://github.com/zhangenping/Touch
-  本地有新改动时：
-    git add .
-    git commit -m "说明"
-    git push
-
-
-二、注册 Railway
-----------------
-  1. 打开 https://railway.app
-  2. 用 GitHub 登录
-  3. 授权访问仓库
-
-
-三、创建项目
-------------
-  1. Dashboard → New Project
-  2. 选 Deploy from GitHub repo
-  3. 选择仓库 zhangenping / Touch
-  4. 分支选 master（或 main）
-
-
-四、添加 PostgreSQL 数据库
---------------------------
-  1. 在项目画布 Empty → 点 + Add Service
-  2. 选 Database → PostgreSQL
-  3. 等数据库部署完成
-  4. 点 Postgres 服务 → Variables 或 Connect
-  5. 复制 DATABASE_URL（形如 postgresql://postgres:xxx@...）
-
-
-五、配置 Web 服务环境变量
--------------------------
-  点 Touch（Web）服务 → Variables → Add：
-
-    DATABASE_URL     = <粘贴 Postgres 的 URL>
-    JWT_SECRET       = <至少32位随机字符串>
-    NODE_ENV         = production
-    PORT             = 3001
-
-  Railway 会自动注入 PORT，也可不手写 PORT。
-
-
-六、配置构建与启动命令
-----------------------
-  Web 服务 → Settings：
-
-  Build Command（构建）：
-    npm install && npm run db:generate && npm run build
-
-  Start Command（启动）：
-    npm run db:deploy && npm start
-
-  Root Directory：留空（项目根目录）
-
-  Watch Paths：默认即可
-
-
-七、生成公网域名
-----------------
-  Web 服务 → Settings → Networking → Generate Domain
-
-  得到类似：
-    touch-production-xxxx.up.railway.app
-
-  手机/任意电脑浏览器打开该地址即可注册、登录。
-
-
-八、验证
+重要说明
 --------
-  1. 打开 https://你的域名.up.railway.app/register
-  2. 注册账号
-  3. 登录后浏览 HOME / RESUME 等
+  ❌ 不能把 docker-compose.prod.yml 原样上传到 Railway 跑两个容器。
+  ✅ 可以：GitHub 代码 + 项目根目录 Dockerfile（与本地 touch-app 镜像相同逻辑）。
+  ✅ 数据库：在 Railway 里单独添加 PostgreSQL 插件（代替 compose 里的 db 容器）。
 
-  若失败：Deployments → 查看最新日志
+架构对照
+--------
+  本地 Docker：
+    touch-db-1 (Postgres)  +  touch-app-1 (Dockerfile 构建)
 
-
-九、Railway 与 Docker 服务器对比
---------------------------------
-  |          | Docker 云服务器      | Railway              |
-  |----------|----------------------|----------------------|
-  | 运维     | 自己管 SSH、防火墙   | 平台托管             |
-  | 国内速度 | 选国内云较快         | 服务器多在海外       |
-  | 费用     | 轻量机约50元/月起    | 有免费额度，超出计费 |
-  | 适用     | 长期、国内用户多     | 快速上线、海外访问   |
+  Railway：
+    PostgreSQL 插件服务      +  Touch 服务（用 Dockerfile 构建）
 
 
-十、更新网站
+一、前提
+--------
+  代码已推送到：https://github.com/zhangenping/Touch
+  本地 Docker 已能打开 http://localhost:3001（可选，用于验证）
+
+
+二、创建 Railway 项目
+--------------------
+  1. 登录 https://railway.app
+  2. New Project → Deploy from GitHub repo
+  3. 选择 zhangenping / Touch，分支 master
+
+
+三、添加 PostgreSQL（代替 Docker 里的 db）
+------------------------------------------
+  1. 项目画布 → + New → Database → PostgreSQL
+  2. 等 Postgres 服务变为 Active
+  3. 打开 Postgres → Variables 或 Connect → 复制 DATABASE_URL
+
+
+四、配置 Web 服务（Touch）— 用 Dockerfile
+-----------------------------------------
+  1. 点开从 GitHub 部署出来的 Touch 服务
+  2. Settings → Build：
+       Builder：Dockerfile
+       Dockerfile Path：Dockerfile（默认根目录）
+     （不要填 npm build 那套，除非不用 Docker）
+
+  3. Settings → Deploy：
+       清空自定义 Start Command（用 Dockerfile 里 CMD 即可）
+       或保留为空，让镜像启动时自动：
+         prisma migrate deploy && node server/dist/index.js
+
+  4. Variables → 添加/引用：
+
+       DATABASE_URL = ${{Postgres.DATABASE_URL}}
+       （或手动粘贴 Postgres 的 DATABASE_URL）
+
+       JWT_SECRET   = <至少32位随机字符串，自行生成>
+
+       NODE_ENV     = production
+
+     说明：PORT 由 Railway 自动注入，程序会读取，无需写死 3001。
+
+  5. Networking → Generate Domain → 得到公网地址
+
+
+五、首次部署与验证
+------------------
+  Deployments 里等待 Build + Deploy 成功（约 3～10 分钟）。
+
+  浏览器打开：
+    https://你的域名.up.railway.app/register
+
+  注册 → 登录 → 浏览页面。
+
+
+六、与本地 Docker 的差异
+------------------------
+  | 项目           | 本地 docker-compose.prod | Railway        |
+  |----------------|--------------------------|----------------|
+  | 网站镜像       | Dockerfile 构建          | 同一 Dockerfile |
+  | 数据库         | db 容器                  | Postgres 插件   |
+  | 连接串         | touch:touch_secret@db    | Railway 提供的 URL |
+  | 访问地址       | localhost:3001           | *.up.railway.app |
+
+  环境变量 DATABASE_URL 必须指向 Railway Postgres，不能用 localhost。
+
+
+七、常见问题
 ------------
-  推送到 GitHub 后 Railway 通常自动重新部署。
-  数据库迁移若新增表，Start Command 已含 db:deploy 会自动执行。
+  Q：构建失败拉不到 node 镜像？
+  A：Railway 在海外，一般用官方 node:22-alpine 即可；
+     本地 Dockerfile 的 NODE_IMAGE 镜像加速参数在 Railway 可不设。
+
+  Q：数据库连接失败？
+  A：确认 Touch 服务 Variables 里 DATABASE_URL 已关联 Postgres。
+
+  Q：打开域名 502？
+  A：看 Deploy Logs；确认 migrate 成功、JWT_SECRET 已设置。
+
+  Q：推送 GitHub 后如何更新？
+  A：Railway 自动重新构建 Dockerfile 并部署。
+
+
+八、费用提示
+------------
+  Railway 按用量计费，有试用额度；Postgres + Web 两个服务都会占额度。

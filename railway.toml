@@ -1,0 +1,10 @@
+# Railway 使用根目录 Dockerfile 部署（与本地 Docker 网站容器一致）
+# 数据库需在 Railway 控制台单独添加 PostgreSQL，并设置 DATABASE_URL、JWT_SECRET
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/api/health"
+restartPolicyType = "ON_FAILURE"
