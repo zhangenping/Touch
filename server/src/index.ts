@@ -33,6 +33,6 @@ if (isProd) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`API server http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`API server listening on 0.0.0.0:${PORT}`);
 });

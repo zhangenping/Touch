@@ -1,0 +1,86 @@
+Railway 部署失败：Healthcheck failure — 修复步骤
+==============================================
+
+原因（与 Railway 诊断一致）
+--------------------------
+  1. 未配置 DATABASE_URL → 启动时 Prisma 迁移失败，进程退出
+  2. 未配置 JWT_SECRET → 登录接口无法工作（部分版本启动即需）
+  3. 应用未监听端口 → 健康检查 /api/health 失败
+
+  Build / Deploy 显示成功，但容器内应用其实已崩溃。
+
+
+一、立即修复（在 Railway 网页操作）
+----------------------------------
+
+【步骤 1】添加 PostgreSQL（若项目里还没有）
+  项目画布 → + New → Database → PostgreSQL
+  等待状态 Active
+
+【步骤 2】配置 Touch 服务变量
+  点开 Touch 服务 → Variables 标签
+
+  方式 A（推荐）：点诊断里的紫色按钮
+    「Set DATABASE_URL and JWT_SECRET」
+
+  方式 B（手动添加）：
+    点 + New Variable：
+
+    名称: DATABASE_URL
+    值:   点「引用」→ 选择 Postgres 服务的 DATABASE_URL
+          （或从 Postgres → Connect 复制整串 postgresql://...）
+
+    名称: JWT_SECRET
+    值:   自行生成一长串随机字符，例如：
+          openssl rand -base64 32
+          或用任意 32 位以上字母数字
+
+    名称: NODE_ENV
+    值:   production
+
+  保存后确认 Variables 列表里能看到这三项。
+
+【步骤 3】确认构建方式
+  Touch → Settings → Build
+    Builder: Dockerfile
+    Dockerfile Path: Dockerfile
+
+  Deploy 里不要写会覆盖 Dockerfile CMD 的自定义 Start Command。
+
+【步骤 4】重新部署
+  Deployments → 最新一条 → Redeploy
+  或推送 GitHub 新提交后自动部署
+
+【步骤 5】验证
+  Settings → Networking → 打开公网域名
+  访问 https://你的域名.up.railway.app/api/health
+  应返回 {"ok":true}
+
+  再访问 /register 测试注册。
+
+
+二、变量示例（Raw Editor）
+-------------------------
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+JWT_SECRET=请替换为你的随机密钥至少32位
+NODE_ENV=production
+
+  注意：${{Postgres.DATABASE_URL}} 里的 Postgres 必须与你
+  数据库服务名称一致；若服务名不同，改用手动复制连接串。
+
+
+三、仍失败时查日志
+------------------
+  Deployments → View Logs，搜索：
+    FATAL: DATABASE_URL
+    FATAL: JWT_SECRET
+    Error: P1001  (数据库连不上)
+
+  数据库连不上：确认 Postgres 与 Touch 在同一 Railway 项目内。
+
+
+四、代码侧已做改进（推送后生效）
+--------------------------------
+  - 启动脚本启动前检查环境变量，日志更清晰
+  - 服务监听 0.0.0.0（适配 Railway 健康检查）
+  - healthcheck 超时延长至 120 秒

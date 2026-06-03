@@ -22,5 +22,7 @@ COPY --from=build /app/server/prisma ./server/prisma
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=build /app/node_modules/prisma ./node_modules/prisma
+COPY server/scripts/start.sh server/scripts/start.sh
+RUN chmod +x server/scripts/start.sh
 EXPOSE 3001
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=server/prisma/schema.prisma && node server/dist/index.js"]
+CMD ["sh", "server/scripts/start.sh"]
